@@ -21,6 +21,6 @@ pip install -r requirements.txt
 flake8 app.py
 pytest -v
 coverage run -m pytest && coverage report
-bandit -r . -x ./venv,./tests -ll
+bandit app.py deploy.py -ll
 python deploy.py
 ```

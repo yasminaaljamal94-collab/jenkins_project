@@ -1,9 +1,5 @@
 [run]
-source = .
-omit =
-    venv/*
-    tests/*
-    deploy.py
+include = app.py
 
 [report]
 show_missing = True

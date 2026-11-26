@@ -9,7 +9,7 @@
 | `tests/test_app.py` | unittest checking `greet("World")` |
 | `requirements.txt` | flake8, pytest, coverage, bandit |
 | `pytest.ini` | puts the project root on the import path so `from app import greet` works |
-| `.coveragerc` | coverage settings (excludes venv/tests, minimum 80%) |
+| `.coveragerc` | coverage settings (measures app.py, minimum 80%) |
 | `deploy.py` | local deployment script |
 | `Jenkinsfile_Yasmina_Eljamal` | the pipeline |
 
@@ -18,7 +18,7 @@
 1. **Coverage stage (new).** Runs the test suite under coverage.py:
    `coverage run -m pytest && coverage report && coverage xml && coverage html`.
    The report is printed in the console log, and `coverage.xml` plus the `htmlcov/` HTML report are archived as build artifacts. `.coveragerc` sets `fail_under = 80`, so the stage fails if coverage drops below 80%. The `if __name__ == "__main__":` block is excluded since it is not library code.
-2. **Security Scan stage (new).** Runs bandit on the source (excluding `venv` and `tests`). A full report is written to `bandit-report.txt` and archived; a second run with `-ll` fails the build on any **medium or high** severity issue. Low-severity notes (the `subprocess` import used by the deploy smoke test) are reported but do not fail the build.
+2. **Security Scan stage (new).** Runs bandit on the application source (`app.py`, `deploy.py`). A full report is written to `bandit-report.txt` and archived; a second run with `-ll` fails the build on any **medium or high** severity issue. Low-severity notes (the `subprocess` import used by the deploy smoke test) are reported but do not fail the build.
 3. **Deploy stage (implemented).** Replaced the `echo` placeholder with `python deploy.py deploy_target`, which:
    - copies `app.py` and `requirements.txt` into a timestamped release folder (`deploy_target/release_YYYYMMDD_HHMMSS`),
    - writes the release name to `deploy_target/CURRENT`,
@@ -33,7 +33,7 @@
 | Lint | `flake8 app.py` | no style errors |
 | Test | `pytest -v` | all tests pass |
 | Coverage | `coverage run -m pytest`, `coverage report/xml/html` | coverage ≥ 80% |
-| Security Scan | `bandit -r . -x ./venv,./tests -ll` | no medium/high issues |
+| Security Scan | `bandit app.py deploy.py -ll` | no medium/high issues |
 | Deploy | `python deploy.py deploy_target` | files copied and smoke test passes |
 
 ## 4. Output of the pipeline

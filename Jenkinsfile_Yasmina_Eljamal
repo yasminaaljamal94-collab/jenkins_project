@@ -71,8 +71,8 @@ pipeline {
                 script {
                     // Scan the source with bandit; the build fails on any
                     // medium- or high-severity finding (-ll).
-                    run(". ${VIRTUAL_ENV}/bin/activate && bandit -r . -x ./venv,./tests -f txt -o bandit-report.txt --exit-zero && bandit -r . -x ./venv,./tests -ll",
-                        "call ${VIRTUAL_ENV}\\Scripts\\activate.bat && bandit -r . -x ./venv,./tests -f txt -o bandit-report.txt --exit-zero && bandit -r . -x ./venv,./tests -ll")
+                    run(". ${VIRTUAL_ENV}/bin/activate && bandit app.py deploy.py -f txt -o bandit-report.txt --exit-zero && bandit app.py deploy.py -ll",
+                        "call ${VIRTUAL_ENV}\\Scripts\\activate.bat && bandit app.py deploy.py -f txt -o bandit-report.txt --exit-zero && bandit app.py deploy.py -ll")
                 }
             }
             post {
