@@ -36,33 +36,49 @@
 | Security Scan | `bandit app.py deploy.py -ll` | no medium/high issues |
 | Deploy | `python deploy.py deploy_target` | files copied and smoke test passes |
 
-## 4. Output of the pipeline
+## 4. Output of the Jenkins build
 
-The same commands the pipeline runs were executed on the project before pushing, with these results:
+The `Python-CI-CD` job ("Pipeline script from SCM": Git, branch `*/main`, Script Path `Jenkinsfile_Yasmina_Eljamal`) was run on Jenkins 2.580.3 (Windows, Java 21, Python 3.12).
+**Build #1 result: `Finished: SUCCESS`** (about 2 minutes). Full log: [`jenkins_build_1_console.txt`](jenkins_build_1_console.txt).
 
-- **Lint:** flake8 – no errors.
-- **Test:** `tests/test_app.py::TestApp::test_greet PASSED` – 1 passed.
-- **Coverage:**
-  ```
-  Name     Stmts   Miss  Cover   Missing
-  --------------------------------------
-  app.py       2      0   100%
-  --------------------------------------
-  TOTAL        2      0   100%
-  ```
-- **Security Scan:** bandit – "No issues identified" at medium/high severity (2 low-severity notes on the `subprocess` use in `deploy.py`).
-- **Deploy:**
-  ```
-  Copied app.py -> deploy_target/release_...
-  Copied requirements.txt -> deploy_target/release_...
-  Smoke test output: Hello, World from Yasmina Eljamal!
-  Deployment successful: deploy_target/release_...
-  ```
+| Stage | Result | Key output |
+|---|---|---|
+| Checkout SCM | ✅ | cloned `main` @ `73cc7c7` |
+| Setup | ✅ | venv created; flake8 7.5.0, pytest 9.2.0, coverage 7.17.5, bandit 1.9.4 installed |
+| Lint | ✅ | `flake8 app.py`: no errors |
+| Test | ✅ | `tests/test_app.py::TestApp::test_greet PASSED` (1 passed) |
+| Coverage | ✅ | `app.py` 100% coverage; `coverage.xml` + `htmlcov/` archived |
+| Security Scan | ✅ | bandit: no medium/high issues (2 low); `bandit-report.txt` archived |
+| Deploy | ✅ | release folder created, smoke test printed `Hello, World from Yasmina Eljamal!` |
 
-**Jenkins build `Python-CI-CD`:**
+Coverage stage:
+```
+Name     Stmts   Miss  Cover   Missing
+--------------------------------------
+app.py       2      0   100%
+--------------------------------------
+TOTAL        2      0   100%
+Wrote XML report to coverage.xml
+Wrote HTML report to htmlcov\index.html
+```
 
-<!-- Add screenshots here: (1) the stage view with all six stages green, (2) the end of the Console Output showing "Finished: SUCCESS". -->
+Security Scan stage:
+```
+Test results:
+        No issues identified.
+Run metrics:
+        Total issues (by severity):
+                Low: 2   Medium: 0   High: 0
+```
 
-![Stage view](screenshots/stage_view.png)
-
-![Console output](screenshots/console_output.png)
+Deploy stage:
+```
+Deploying application...
+Copied app.py -> deploy_target\release_20261126_223923
+Copied requirements.txt -> deploy_target\release_20261126_223923
+Smoke test output: Hello, World from Yasmina Eljamal!
+Deployment successful: deploy_target\release_20261126_223923
+...
+Pipeline finished: all stages passed.
+Finished: SUCCESS
+```
