@@ -1,0 +1,8 @@
+venv/
+__pycache__/
+*.pyc
+.coverage
+htmlcov/
+coverage.xml
+bandit-report.*
+deploy_target/
